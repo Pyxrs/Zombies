@@ -9,7 +9,7 @@
   ],
   "contributors": [],
   "contact": {},
-  "license": "MIT",
+  "license": "Apache License 2.0",
   "icon": "assets/zombies/icon.png",
   "environment": "*",
   "entrypoints": {
