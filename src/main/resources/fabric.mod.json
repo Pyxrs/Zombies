@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "zombies",
+  "version": "${version}",
+  "name": "Zombies!",
+  "description": "Zombies lol",
+  "authors": [
+    "SimplyCmd"
+  ],
+  "contributors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/zombies/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["io.github.simplycmd.zombies.Main"],
+    "client": ["io.github.simplycmd.zombies.MainClient"],
+    "server": []
+  },
+  "mixins": [
+    "zombies.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.1",
+    "fabric": "*"
+  }
+}
