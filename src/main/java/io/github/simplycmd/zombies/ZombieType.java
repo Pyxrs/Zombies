@@ -9,11 +9,11 @@ import net.minecraft.world.poi.PointOfInterestType;
 import org.jetbrains.annotations.Nullable;
 
 public class ZombieType {
-    public static final ZombieType NORMAL = new ZombieType(35.0, 0.23000000417232513, 3.0,2.0D, VillagerProfession.NONE);
-    public static final ZombieType SPEEDY = new ZombieType(40.0, 0.38000000417232513, 2.0,2.0D, VillagerProfession.FLETCHER);
-    public static final ZombieType SIGHTY = new ZombieType(60.0, 0.23000000417232513, 3.0,2.0D, VillagerProfession.CARTOGRAPHER);
-    public static final ZombieType PUNCHY = new ZombieType(35.0, 0.20000000417232513, 6.0,1.5D, VillagerProfession.WEAPONSMITH);
-    public static final ZombieType TANKY = new ZombieType(35.0, 0.23000000417232513, 3.0,6.0D, VillagerProfession.ARMORER);
+    public static final ZombieType NORMAL = new ZombieType(0, 0, 0,0, VillagerProfession.NONE);
+    public static final ZombieType SPEEDY = new ZombieType(5.0, 0.1, -1.0,0, VillagerProfession.FLETCHER);
+    public static final ZombieType SIGHTY = new ZombieType(25.0, 0, 0,0, VillagerProfession.CARTOGRAPHER);
+    public static final ZombieType PUNCHY = new ZombieType(0, -0.01, 6.0,-0.5D, VillagerProfession.WEAPONSMITH);
+    public static final ZombieType TANKY = new ZombieType(0, -0.03, 1.0D,4.0D, VillagerProfession.ARMORER);
     double follow_range;
     double movement_speed;
     double attack_damage;
@@ -34,5 +34,32 @@ public class ZombieType {
 
     public double getMovementSpeed() {
         return movement_speed;
+    }
+
+    public double getAttackDamage() {
+        return attack_damage;
+    }
+
+    public double getArmor() {
+        return armor;
+    }
+
+    public VillagerProfession getProfession() {
+        return profession;
+    }
+
+    public static ZombieType determineType() {
+        double random = Math.random();
+        if (random <= 0.125) {
+            return SPEEDY;
+        } else if (random > 0.125 && random <= 0.25) {
+            return SIGHTY;
+        } else if (random > 0.25 && random <= 0.375) {
+            return PUNCHY;
+        } else if (random > 0.375 && random <= 0.5) {
+            return TANKY;
+        } else {
+            return NORMAL;
+        }
     }
 }

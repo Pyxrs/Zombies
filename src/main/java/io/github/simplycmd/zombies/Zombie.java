@@ -14,12 +14,18 @@ import net.minecraft.world.World;
 public class Zombie extends ZombieEntity {
     int tick_counter = 0;
     World world;
+    public ZombieType type;
 
     protected Zombie(EntityType<? extends ZombieEntity> entityType, World world) {
         super(entityType, world);
         this.world = world;
-        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("speed", 0.2D, EntityAttributeModifier.Operation.ADDITION));
-        System.out.println(this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).getValue());
+        type = ZombieType.determineType();
+
+        // Add attributes
+        this.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE).addPersistentModifier(new EntityAttributeModifier("follow", type.getFollowRange(), EntityAttributeModifier.Operation.ADDITION));
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier("speed", type.getMovementSpeed(), EntityAttributeModifier.Operation.ADDITION));
+        this.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier("damage", type.getAttackDamage(), EntityAttributeModifier.Operation.ADDITION));
+        this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addPersistentModifier(new EntityAttributeModifier("armor", type.getArmor(), EntityAttributeModifier.Operation.ADDITION));
     }
 
     @Override
