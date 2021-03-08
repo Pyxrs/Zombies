@@ -7,14 +7,16 @@
   "authors": [
     "SimplyCmd"
   ],
-  "contributors": [],
+  "contributors": [
+    "https://www.planetminecraft.com/skin/realistic-zombie-3335827/"
+  ],
   "contact": {},
   "license": "Apache License 2.0",
   "icon": "assets/zombies/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": ["io.github.simplycmd.zombies.Main"],
-    "client": ["io.github.simplycmd.zombies.MainClient"],
+    "client": [],
     "server": []
   },
   "mixins": [

@@ -1,12 +1,6 @@
 package io.github.simplycmd.zombies;
 
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.village.VillagerProfession;
-import net.minecraft.world.poi.PointOfInterestType;
-import org.jetbrains.annotations.Nullable;
 
 public class ZombieType {
     public static final ZombieType NORMAL = new ZombieType(0, 0, 0,0, VillagerProfession.NONE);
@@ -44,6 +38,22 @@ public class ZombieType {
         return armor;
     }
 
+    public void setFollowRange(double follow_range) {
+        this.follow_range = follow_range;
+    }
+
+    public void setMovementSpeed(double movement_speed) {
+        this.movement_speed = movement_speed;
+    }
+
+    public void setAttackDamage(double attack_damage) {
+        this.attack_damage = attack_damage;
+    }
+
+    public void setArmor(double armor) {
+        this.armor = armor;
+    }
+
     public VillagerProfession getProfession() {
         return profession;
     }
@@ -61,5 +71,18 @@ public class ZombieType {
         } else {
             return NORMAL;
         }
+    }
+
+    public static ZombieType calculateStats(ZombieType type) {
+        type.setFollowRange(doCalculations(type.getFollowRange()));
+        type.setMovementSpeed(doCalculations(type.getMovementSpeed()));
+        type.setAttackDamage(doCalculations(type.getAttackDamage()));
+        type.setArmor(doCalculations(type.getArmor()));
+
+        return type;
+    }
+
+    private static double doCalculations(double stat) {
+        return stat + Math.abs(stat * (Main.increaseByDay(0, 2, 250D)));
     }
 }

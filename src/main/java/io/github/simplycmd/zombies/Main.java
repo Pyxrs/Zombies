@@ -2,24 +2,13 @@ package io.github.simplycmd.zombies;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import xyz.nucleoid.disguiselib.EntityDisguise;
-
-import java.util.Iterator;
 
 public class Main implements ModInitializer {
     public static Logger LOGGER = LogManager.getLogger();
@@ -30,19 +19,14 @@ public class Main implements ModInitializer {
     int tick_counter = 0;
 
     long old_day = 0;
+    public static long day;
     public static boolean blood_moon = false;
     public static boolean blood_moon_night = false;
-
-    public static final EntityType<Zombie> ZOMBIE = Registry.register(
-            Registry.ENTITY_TYPE,
-            new Identifier(MOD_ID, "zombie"),
-            FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Zombie::new).dimensions(EntityDimensions.fixed(0.75f, 0.75f)).build());
 
     @Override
     public void onInitialize() {
         ServerTickCallback.EVENT.register(this::onServerTick);
         log(Level.INFO, "Initializing");
-        FabricDefaultAttributeRegistry.register(ZOMBIE, Zombie.createZombieAttributes());
     }
 
     public static void log(Level level, String message){
@@ -50,7 +34,7 @@ public class Main implements ModInitializer {
     }
 
     private void onServerTick(MinecraftServer minecraftServer) {
-        if (tick_counter == 40) { //400
+        if (tick_counter == 40) {
             tick_counter = 0;
             update(minecraftServer);
         } else {
@@ -60,14 +44,7 @@ public class Main implements ModInitializer {
 
     private void update(MinecraftServer server) {
         ServerWorld world = server.getOverworld();
-        Iterator<Entity> entities = world.getEntitiesByType(Main.ZOMBIE, (entity) -> true).iterator();
-        while (entities.hasNext()) {
-            Zombie entity = (Zombie) entities.next();
-            if (!((EntityDisguise) entity).isDisguised()) {
-                server.getCommandManager().execute(server.getCommandSource(), "/execute positioned " + entity.getX() + " " + entity.getY() + " " + entity.getZ() + " as @e[type=zombies:zombie,distance=0..1,limit=1] run disguise @s as minecraft:zombie_villager {VillagerData:{profession:\"minecraft:" + entity.type.getProfession().toString() + "\"}}");
-            }
-        }
-        long day = world.getTimeOfDay() / 24000L;
+        day = world.getTimeOfDay() / 24000L;
         if (day == 0) {
             day = 1;
         }
@@ -75,7 +52,7 @@ public class Main implements ModInitializer {
 
         if (day != old_day) {
             old_day = day;
-            newDay(server, day);
+            blood_moon = isNightBloodMoon();
         }
 
         if (blood_moon) {
@@ -86,28 +63,24 @@ public class Main implements ModInitializer {
                 blood_moon_night = true;
             }
         }
-        System.out.println(blood_moon + "         " + time);
     }
 
-    private void newDay(MinecraftServer server, long day) {
-        blood_moon = isNightBloodMoon(day);
+    private Boolean isNightBloodMoon() {
+        double chance = increaseByDay(0.2, 0.8, 250);
+
+        return Math.random() < chance;
     }
 
-    private Boolean isNightBloodMoon(long day) {
-        double chance = 0.8D * (day / 250D);
+    public static double increaseByDay(double min, double max, double max_day) {
+        return clamped(min, max, max * (day / max_day));
+    }
 
-        if (chance > 0.8) {
-            chance = 0.8;
-        } else if (chance < 0.2) {
-            chance = 0.2;
+    public static double clamped(double min, double max, double value) {
+        if (value > max) {
+            value = max;
+        } else if (value < min) {
+            value = min;
         }
-
-        if (Math.random() < chance) {
-            System.out.println("TRUEO");
-            return true;
-        } else {
-            System.out.println("FALSO");
-            return false;
-        }
+        return value;
     }
 }
