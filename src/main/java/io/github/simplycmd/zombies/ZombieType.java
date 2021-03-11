@@ -4,7 +4,7 @@ import net.minecraft.village.VillagerProfession;
 
 public class ZombieType {
     public static final ZombieType NORMAL = new ZombieType(0, 0, 0,0, VillagerProfession.NONE);
-    public static final ZombieType SPEEDY = new ZombieType(5.0, 0.1, -1.0,0, VillagerProfession.FLETCHER);
+    public static final ZombieType SPEEDY = new ZombieType(5.0, 0.05, -1.0,0, VillagerProfession.FLETCHER);
     public static final ZombieType SIGHTY = new ZombieType(25.0, 0, 0,0, VillagerProfession.CARTOGRAPHER);
     public static final ZombieType PUNCHY = new ZombieType(0, -0.01, 6.0,-0.5D, VillagerProfession.WEAPONSMITH);
     public static final ZombieType TANKY = new ZombieType(0, -0.03, 1.0D,4.0D, VillagerProfession.ARMORER);
@@ -83,6 +83,6 @@ public class ZombieType {
     }
 
     private static double doCalculations(double stat) {
-        return stat + Math.abs(stat * (Main.increaseByDay(0, 2, 250D)));
+        return stat;// + Math.abs(Main.increaseByDay(0, stat, 250D));
     }
 }

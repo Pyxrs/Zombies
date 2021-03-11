@@ -3,12 +3,6 @@ plugins {
 	id 'maven-publish'
 }
 
-repositories {
-	maven {
-		url 'https://jitpack.io'
-	}
-}
-
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -26,8 +20,6 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-	modImplementation "com.github.NucleoidMC:DisguiseLib:${project.disguise_version}"
 }
 
 processResources {

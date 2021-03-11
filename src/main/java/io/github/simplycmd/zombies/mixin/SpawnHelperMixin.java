@@ -33,6 +33,7 @@ import java.util.Random;
 public class SpawnHelperMixin {
     /**
      * @author SimplyCmd
+     * @reason Intrusively rewrite mob spawning to only support Zombies
      */
     @Overwrite
     @Nullable
@@ -60,14 +61,18 @@ public class SpawnHelperMixin {
 
             // Entity limit
             WorldChunk chunk = (WorldChunk) world.getChunk(pos);
-            Iterator<TypeFilterableList<Entity>> entities = Arrays.stream(chunk.getEntitySectionArray()).iterator();
+            world.getEntitiesByType(EntityType.ZOMBIE_VILLAGER, (entitye) -> true);
+            Iterator<Entity> entities = world.getEntitiesByType(EntityType.ZOMBIE_VILLAGER, (entitye) -> true).iterator();
             int total_entities = 0;
             while (entities.hasNext()) {
-                TypeFilterableList<Entity> list = entities.next();
-                total_entities += list.size();
+                Entity current = entities.next();
+                total_entities++;
             }
-
-            if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, pos, entity.getType()) && total_entities <= Main.increaseByDay(1, 5, 250)) {
+            int limit = 100;
+            if (Main.blood_moon) {
+                limit = 200;
+            }
+            if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, pos, entity.getType()) && total_entities <= limit) {
                 return squaredDistance < (double) (entity.getType().getSpawnGroup().getImmediateDespawnRange() * entity.getType().getSpawnGroup().getImmediateDespawnRange());
             } else {
                 return false;

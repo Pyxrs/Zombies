@@ -2,19 +2,26 @@ package io.github.simplycmd.zombies;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
 
 public class Main implements ModInitializer {
     public static Logger LOGGER = LogManager.getLogger();
 
     public static final String MOD_ID = "zombies";
     public static final String MOD_NAME = "Zombies!";
+
+    public static MinecraftServer the_server;
 
     int tick_counter = 0;
 
@@ -43,24 +50,21 @@ public class Main implements ModInitializer {
     }
 
     private void update(MinecraftServer server) {
+        the_server = server;
         ServerWorld world = server.getOverworld();
         day = world.getTimeOfDay() / 24000L;
         if (day == 0) {
             day = 1;
         }
-        long time = (world.getTimeOfDay() / day) / 2;
 
         if (day != old_day) {
             old_day = day;
             blood_moon = isNightBloodMoon();
-        }
-
-        if (blood_moon) {
-            if (time > 12000 && time < 12055) {
-                server.getPlayerManager().sendToAll(new TitleS2CPacket(TitleS2CPacket.Action.ACTIONBAR, Text.of("§4§lA BLOOD MOON IS RISING...")));
-            }
-            if (time > 12000) {
+            if (blood_moon) {
+                server.getPlayerManager().sendToAll(new TitleS2CPacket(TitleS2CPacket.Action.ACTIONBAR, new TranslatableText("§4§lA BLOOD MOON IS RISING...")));
                 blood_moon_night = true;
+            } else {
+                blood_moon_night = false;
             }
         }
     }
@@ -72,7 +76,7 @@ public class Main implements ModInitializer {
     }
 
     public static double increaseByDay(double min, double max, double max_day) {
-        return clamped(min, max, max * (day / max_day));
+        return clamped(min, max, max * (day / max_day)); //day
     }
 
     public static double clamped(double min, double max, double value) {
