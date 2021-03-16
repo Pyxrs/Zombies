@@ -2,6 +2,8 @@ package io.github.simplycmd.zombies.mixin;
 
 import io.github.simplycmd.zombies.Main;
 import io.github.simplycmd.zombies.access.ZombieVillagerEntityAccess;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
@@ -16,6 +18,7 @@ import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.jetbrains.annotations.Nullable;
@@ -25,9 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 @Mixin(SpawnHelper.class)
 public class SpawnHelperMixin {
@@ -72,7 +73,21 @@ public class SpawnHelperMixin {
             if (Main.blood_moon) {
                 limit = 200;
             }
-            if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, pos, entity.getType()) && total_entities <= limit) {
+
+            List<Block> blacklisted_blocks = new ArrayList();
+            blacklisted_blocks.add(Blocks.OAK_PLANKS);
+            blacklisted_blocks.add(Blocks.COBBLESTONE);
+            blacklisted_blocks.add(Blocks.OBSIDIAN);
+            blacklisted_blocks.add(Blocks.FURNACE);
+            blacklisted_blocks.add(Blocks.CRAFTING_TABLE);
+            blacklisted_blocks.add(Blocks.SPRUCE_PLANKS);
+            blacklisted_blocks.add(Blocks.BIRCH_PLANKS);
+            blacklisted_blocks.add(Blocks.STONE);
+            //if (new LightingProvider.displaySectionLevel()) {
+
+            //}
+
+            if (SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, pos, entity.getType()) && total_entities <= limit && !blacklisted_blocks.contains(world.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())).getBlock())) {
                 return squaredDistance < (double) (entity.getType().getSpawnGroup().getImmediateDespawnRange() * entity.getType().getSpawnGroup().getImmediateDespawnRange());
             } else {
                 return false;
